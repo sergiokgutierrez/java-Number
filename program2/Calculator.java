@@ -13,9 +13,13 @@ public class Calculator {
 		Number number2;
 		
 		do{
+			if(number == null){
+				System.out.println("number: 0");
+			}else
+			System.out.println("number: "+number);
 			menu();			
 			c = keyboard.next();
-			switch(c){
+			switch(c){			
 			case "e":
 				//need to create a checkMethod to see if input is correct
 				str = keyboard.next();
@@ -54,12 +58,16 @@ public class Calculator {
 					break;
 				}
 				number = number.multiply(number2);
+				System.out.println("\n : "+number+"\n");
 				break;
 			case "c":
 				number = null;
 				break;
 			case "q":
 				option = false;
+				break;
+			case "r":
+				number.reverseSign();
 				break;
 			case "p":
 				System.out.println("number: "+ number);

@@ -6,9 +6,9 @@ public class Number {
 	private int decimalPlaces = 0;
 	private boolean negative = false;
 	
-	//extra variables
-	int leadingZeros = 0;
-	int trailingZeros = 0;
+//	//extra variables
+//	int leadingZeros = 0;
+//	int trailingZeros = 0;
 	
 	public Number(){
 		digitCount = 0;
@@ -54,38 +54,64 @@ public class Number {
 		}
 		
 		System.out.println("digitCount: "+digitCount+" decimalPlaces: "+decimalPlaces);
-		
-		
-		
-//		char ch;
-//		if(str.charAt(0) == '+' || str.charAt(0) == '-'){
-//			if(str.charAt(0) == '+'){
-//				negative = false;
-//			}else
-//				negative = true;
-//
-//			digitCount++;
-//		}
-//		while(str.length() > digitCount){
-//			if(str.charAt(digitCount) == '.'){
-//				decimalPlaces = str.length() - digitCount;//decimal point
-//			}
-//			
-//			digitCount++;
-//		}
+
 		trim();
-		System.out.println("digitCount: "+digitCount+" decimalPlaces: "+decimalPlaces);
 		
+	}
+	/*
+	 * returns <0 if n < this return >0 if this>0 
+	 * returns 0 if both number are the same
+	 */
+	public int compareToAbsolute(Number n){
+		int thisRD = digitCount - decimalPlaces;
+		int nRD = n.getDigitCount() - n.getDecimalPlaces();
+		if( thisRD > nRD){//if this Number has more Real Digits than n. this.number is bigger
+			return 1;
+		}
+		if(thisRD < nRD){//if n has Real Digits than this.number then n is bigger
+			return -1;
+		}
+		
+		if(thisRD == nRD){//if both of them have the same size
+			Node thisPtr = high;
+			Node nPtr = n.high;
+			int comp;
+			do{
+				comp = thisPtr.getData() - nPtr.getData();
+				//
+				if(comp > 0)
+					return comp;
+				if(comp < 0)
+					return comp;
+				
+				thisPtr = thisPtr.next;//traverse this
+				nPtr = nPtr.next;//traverse n
+				
+			}while(thisPtr != null && nPtr != null);
+			if(thisPtr == null && nPtr == null)
+				return 0;
+			if(nPtr == null)
+				return 1;
+			if(thisPtr == null)
+				return -1;
+			
+				
+		}
+		
+		
+		
+		return 0;
 	}
 	public Number add(Number n){
 		if(n == null){
 			return this;
 		}	
-		
+		//if this and n have the same sign just add them and set the correct sign
 		if(negative == n.getNegative()){
 			lineUp(n);
 			Number r = addAbsolute(n);
-			r.setNegative(negative);
+			r.setNegative(negative);//set results sign to this sign (could work with n since they are the same)
+			//set result decimal place by 
 			if(decimalPlaces > n.decimalPlaces)
 				r.setDecimalPlaces(decimalPlaces);
 			else 
@@ -174,42 +200,50 @@ public class Number {
 			Number partialProduct = new Number();
 			int carry = 0;
 			Node thisPtr = this.low;
-			product.insert(0);
+			product.insert(0);//insert 0 to tail as to multiply by 10 INCREASE DIGIT COUNT???
 			while(thisPtr != null){
 				int newDigit = thisPtr.getData() * nPtr.getData() + carry;
 				carry = newDigit / 10;
 				newDigit = newDigit % 10;
-				partialProduct.insertHigh(newDigit);
+				partialProduct.insertHigh(newDigit);//insert at the head
 				partialProduct.increaseDigitCount();
 				thisPtr = thisPtr.previous;
 			}
 			if(carry != 0){
-				partialProduct.insertHigh(carry);
+				partialProduct.insertHigh(carry);//insert at the head
 				partialProduct.increaseDigitCount();
 			}
 			product.increaseDigitCount();
+			product.lineUp(partialProduct);
 			product = product.addAbsolute(partialProduct);
 			nPtr = nPtr.next;
 		}
 		product.setDecimalPlaces(this.decimalPlaces + n.getDecimalPlaces());
-		if(negative == n.negative)
-			product.setNegative(negative);
-		else
-			product.setNegative(true);
+		if(negative == n.negative){
+			product.setNegative(negative);			
+		}
+		else{
+			product.setNegative(true);			
+		}
 		return product;
 
 	}
 	public void reverseSign(){
 		//. Reverses the value of negative.
+		if(negative){
+			negative = false;
+		}else{
+			negative = true;
+		}
 	}
 	public void lineUp(Number n){
 		/*
 		 * ADD LEADING ZEROS
 		 */
-		int thisRP = digitCount - decimalPlaces;
-		int nRP = n.getDigitCount() - n.getDecimalPlaces();
-		int compare = thisRP - nRP;
-		if(compare > 0){
+		int thisRP = digitCount - decimalPlaces;// this Real integer places 10.0001 = 2 RP
+		int nRP = n.getDigitCount() - n.getDecimalPlaces();// n Real places 134.30201 = 3 RP
+		int compare = thisRP - nRP;//compare the decimal points of the number
+		if(compare > 0){//if greated line up n by the difference (compare)
 			n.addLeadingZeros(compare);
 		}
 		else if(compare <0){
@@ -233,86 +267,20 @@ public class Number {
 	}
 	
 	
-	/*
-	 * returns <0 if n < this return >0 if this>0 
-	 * returns 0 if both number are the same
-	 */
-	public int compareToAbsolute(Number n){
-		int thisRD = digitCount - decimalPlaces;
-		int nRD = n.getDigitCount() - n.getDecimalPlaces();
-		if( thisRD > nRD){//if this Number has more Real Digits than n. this.number is bigger
-			return 1;
+	public void addLeadingZeros(int leadingZeros){
+		//trailingZeros
+		for(int i=0; i<leadingZeros; i++){
+			insertHigh(0);//add at the highest node 1.01 = 00001.01
+			digitCount++;
 		}
-		if(thisRD < nRD){//if n has Real Digits than this.number then n is bigger
-			return -1;
-		}
-		
-		if(thisRD == nRD){//if both of them have the same size
-			Node thisPtr = high;
-			Node nPtr = n.high;
-			int comp;
-			do{
-				comp = thisPtr.getData() - nPtr.getData();
-				//
-				if(comp > 0)
-					return comp;
-				if(comp < 0)
-					return comp;
-				
-				thisPtr = thisPtr.next;//traverse this
-				nPtr = nPtr.next;//traverse n
-				
-			}while(thisPtr != null && nPtr != null);
-			if(thisPtr == null && nPtr == null)
-				return 0;
-			if(nPtr == null)
-				return 1;
-			if(thisPtr == null)
-				return -1;
-			
-				
-		}
-		
-		
-		
-		return 0;
 	}
-	
-	public int getDigitCount(){
-		return digitCount;
-	}
-	
-	public int getDecimalPlaces(){
-		return decimalPlaces;
-	}
-	public boolean getNegative(){
-		return negative;
-	}
-	
-	/*
-	 * need to add positive negative on the beggining 
-	 * if positive don't add if negative yes
-	 */
-	public String toString(){
-		//. Returns a String representation of the Number (so it can be displayed by
-		StringBuilder sb = new StringBuilder();
-		if(negative){
-			System.out.println("NEGATIVE");
-			sb.append("-");
+	public void addTrailingZeros(int trailingZeros){
+		//trailingZeros
+		for(int i=0; i<trailingZeros; i++){
+			insert(0);//inserts at the low node 1.01 = 1.010000
+			decimalPlaces++;
+			digitCount++;
 		}
-		Node pointer = high;
-		for(int i=0;i < digitCount; i++){
-			if(i == (digitCount - decimalPlaces)){
-
-				sb.append(".");
-			}
-				sb.append(pointer);
-				pointer = pointer.next;
-
-		}
-		
-		return sb.toString();
-
 	}
 	//uses insert and insert first
 	/*
@@ -350,50 +318,34 @@ public class Number {
 		high = p;
 	}
 	
-	public void addLeadingZeros(int leadingZeros){
-		//trailingZeros
-		for(int i=0; i<leadingZeros; i++){
-			insertHigh(0);
-			this.leadingZeros++;
-		}
-		System.out.println(low);
-	}
-	
-	public void addTrailingZeros(int trailingZeros){
-		//trailingZeros
-		for(int i=0; i<trailingZeros; i++){
-			insert(0);
-			this.trailingZeros++;
-		}
-	}
-	
 	public void trim(){
-		//delete leading zeros
-		for(int i=0; i<leadingZeros; i++){
-//			if(high.data != 0)
-//				return;//if is not leading 0 return
-			high = high.next;
-			
-			
-		}
-		//delete trailing zeros with out affecting the decimal point
-		for( int  i = 0; i < trailingZeros; i++){
-			low = low.previous;
-		}
-		
+//		//delete leading zeros
+//		for(int i=0; i<leadingZeros; i++){
+////			if(high.data != 0)
+////				return;//if is not leading 0 return
+//			high = high.next;
+//			
+//			
+//		}
+//		//delete trailing zeros with out affecting the decimal point
+//		for( int  i = 0; i < trailingZeros; i++){
+//			low = low.previous;
+//		}
+//		
 		
 		/*
 		 * delete leading zeros as long as is less than decimal places
 		 * 
 		 */
-		while(digitCount > decimalPlaces && low.getData() == 0){
-			low = low.previous;
-			digitCount--;
-			decimalPlaces--;
-		}
+
 		while(digitCount > decimalPlaces && high.getData() ==0){
 			high = high.next;
 			digitCount--;
+		}
+		while(0 < decimalPlaces && low.getData() == 0){
+			low = low.previous;
+			digitCount--;
+			decimalPlaces--;
 		}
 		
 	}
@@ -401,11 +353,45 @@ public class Number {
 	public void increaseDigitCount(){
 		digitCount++;
 	}
+	public int getDigitCount(){
+		return digitCount;
+	}
+	public int getDecimalPlaces(){
+		return decimalPlaces;
+	}
+	public boolean getNegative(){
+		return negative;
+	}
 	public void setNegative(boolean negative){
 		this.negative = negative;
 	}
 	public void setDecimalPlaces(int decimalPlaces){
 		this.decimalPlaces = decimalPlaces;
+	}
+							/*
+	 * need to add positive negative on the beggining 
+	 * if positive don't add if negative yes
+	 */
+	public String toString(){
+		//. Returns a String representation of the Number (so it can be displayed by
+		StringBuilder sb = new StringBuilder();
+		if(negative){
+			System.out.println("NEGATIVE");
+			sb.append("-");
+		}
+		Node pointer = high;
+		for(int i=0;i < digitCount; i++){
+			if(i == (digitCount - decimalPlaces)){
+	
+				sb.append(".");
+			}
+				sb.append(pointer);
+				pointer = pointer.next;
+	
+		}
+		
+		return sb.toString();
+	
 	}
 							private class Node{
 								private Node next;
