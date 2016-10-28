@@ -6,16 +6,13 @@ public class Number {
 	private int decimalPlaces = 0;
 	private boolean negative = false;
 	
-//	//extra variables
-//	int leadingZeros = 0;
-//	int trailingZeros = 0;
 	
-	public Number(){
+	public Number(){//default constructor just in case
 		digitCount = 0;
 		decimalPlaces = 0;
 		negative = false;
 	}
-	public Number(String str){
+	public Number(String str){//constructor
 		digitCount = 0;
 		decimalPlaces = 0;
 		negative = false;
@@ -24,7 +21,7 @@ public class Number {
 		}
 		
 	}
-	public void accept(String str){
+	public void accept(String str){///accepts the new  string
 
 		int x, index = 0;
 		char c = str.charAt(0);
@@ -173,14 +170,6 @@ public class Number {
 			carry = newDigit / 10;
 			thisPtr = thisPtr.previous;
 			nPtr = nPtr.previous;
-			
-//				add the values stored in the pointed to nodes plus the carry to
-//			   get int newDigit
-//			   store newDigit % 10 in a new node inserted at the head of sum
-//			   sum.digitCount++
-//			   store newDigit / 10 in carry
-//			   thisPtr = thisPtr.getPrev()
-//			   nPtr = nPtr.getPrev()
 		}
 		if (carry != 0){//create a new node with carry
 			r.insertHigh(carry);
@@ -203,7 +192,6 @@ public class Number {
 			}else{
 				borrow = 0;
 			}
-//			Node newNode = new Node(newDigit);
 			difference.insertHigh(newDigit);
 			difference.increaseDigitCount();
 			thisPtr = thisPtr.previous;
@@ -236,7 +224,7 @@ public class Number {
 		if(compare > 0){//this is bigger
 			lineUp(n);
 			Number r = subtractAbsolute(n);
-			r.setNegative(!this.negative);
+			r.setNegative(this.negative);
 			trim();
 			n.trim();
 			r.trim();
@@ -245,7 +233,7 @@ public class Number {
 		if(compare < 0){//n is bigger
 			lineUp(n);
 			Number r = n.subtractAbsolute(this);//takes this object and substract n-this
-			r.setNegative(!n.getNegative());
+			r.setNegative(!n.getNegative());//signe gets flip
 			trim();
 			n.trim();
 			r.trim();
@@ -441,22 +429,22 @@ public class Number {
 		return sb.toString();
 	
 	}
-							private class Node{
-								private Node next;
-								private Node previous;
-								int data;
-								//constructor where	next = null and previous = null;
-								//and data is equals to data
-								private Node(int data){
-									this.data = data;
-								}
-								public String toString(){
-									return " "+data+ " ";
-								}
-								public int getData(){
-									return data;
-								}
-								
-							}
+	private class Node{
+		private Node next;
+		private Node previous;
+		int data;
+		//constructor where	next = null and previous = null;
+		//and data is equals to data
+		private Node(int data){
+			this.data = data;
+		}
+		public String toString(){
+			return ""+data+ "";
+		}
+		public int getData(){
+			return data;
+		}
+		
+	}
 
 }

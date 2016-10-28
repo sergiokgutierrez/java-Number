@@ -20,36 +20,36 @@ public class Calculator {
 			menu();			
 			c = keyboard.next();
 			switch(c){			
-			case "e":
+			case "e"://enter new number
 				System.out.println("please enter a new value");
 				str = keyboard.next();
 				number = new Number(str);
 				break;
-			case "a":
+			case "a"://addition
 				System.out.println("please enter a number to be added");
 				str = keyboard.next();
 				number2 = new Number(str);
-				if(number == null){
+				if(number == null){//if this 0 + number = number
 					number = number2;
 					break;
 				}
-				if(number2 == null)
+				if(number2 == null)//if 0 + 0 = 0
 					break;
 				number = number.add(number2);
 				break;
-			case "s":
+			case "s"://substraction
 				System.out.println("please enter a number to be substracted");
 				str = keyboard.next();
 				number2 = new Number(str);
-				if(number == null){
+				if(number == null){// 0 + number = number
 					number = number2;
 					break;
 				}
-				if(number2 == null)
+				if(number2 == null)// 0 + 0 = 0
 					break;
 				number = number.subtract(number2);
 				break;
-			case "m":
+			case "m"://multiplication
 				System.out.println("please enter a number to be multiply");
 				str = keyboard.next();
 				number2 = new Number(str);
@@ -59,16 +59,16 @@ public class Calculator {
 				}
 				number = number.multiply(number2);
 				break;
-			case "c":
+			case "c"://clear
 				number = null;
 				break;
-			case "q":
+			case "q"://quit
 				option = false;
 				break;
-			case "r":
+			case "r"://reverse sign
 				number.reverseSign();
 				break;
-			case "p":
+			case "p"://print digit
 				System.out.println("number: "+ number);
 				System.out.println("decimal: "+ number.getDecimalPlaces() + " digits: "+ number.getDigitCount() + " negative " + number.getNegative());
 			
@@ -85,13 +85,6 @@ public class Calculator {
 		System.out.println("reverse sign: r \t\t\t clear: c");
 		System.out.println("quit: q");
 		
-	}
-	public static void add(){
-		Scanner keyboard = new Scanner (System.in);
-		System.out.println("please enter new number");
-		String str = keyboard.nextLine();
-		Number num = new Number(str);
-		System.out.println(num);
 	}
 
 }
