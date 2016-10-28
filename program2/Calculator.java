@@ -21,12 +21,12 @@ public class Calculator {
 			c = keyboard.next();
 			switch(c){			
 			case "e":
-				//need to create a checkMethod to see if input is correct
+				System.out.println("please enter a new value");
 				str = keyboard.next();
 				number = new Number(str);
-				System.out.println("******* number: "+number+"*******");
 				break;
 			case "a":
+				System.out.println("please enter a number to be added");
 				str = keyboard.next();
 				number2 = new Number(str);
 				if(number == null){
@@ -36,9 +36,9 @@ public class Calculator {
 				if(number2 == null)
 					break;
 				number = number.add(number2);
-				System.out.println("\n\n\t\t: "+number);
 				break;
 			case "s":
+				System.out.println("please enter a number to be substracted");
 				str = keyboard.next();
 				number2 = new Number(str);
 				if(number == null){
@@ -47,10 +47,10 @@ public class Calculator {
 				}
 				if(number2 == null)
 					break;
-				number = number.add(number2);
-				System.out.println("\n\n\t\t: "+number);
+				number = number.subtract(number2);
 				break;
 			case "m":
+				System.out.println("please enter a number to be multiply");
 				str = keyboard.next();
 				number2 = new Number(str);
 				if(number == null || number2 == null ){//if ether number or number2 is 0 result is 0 zero 
@@ -58,7 +58,6 @@ public class Calculator {
 					break;
 				}
 				number = number.multiply(number2);
-				System.out.println("\n : "+number+"\n");
 				break;
 			case "c":
 				number = null;

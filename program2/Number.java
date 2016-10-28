@@ -19,7 +19,9 @@ public class Number {
 		digitCount = 0;
 		decimalPlaces = 0;
 		negative = false;
-		accept(str);
+		if(validate(str)){//makes sure that the program validates the 
+			accept(str);
+		}
 		
 	}
 	public void accept(String str){
@@ -52,11 +54,30 @@ public class Number {
 
 			index++;			
 		}
-		
-		System.out.println("digitCount: "+digitCount+" decimalPlaces: "+decimalPlaces);
-
 		trim();
 		
+	}
+	public boolean validate(String str){//makes sure that the string is in a proper form so user enters correct input
+		try{
+			int i=0;	
+			char c = str.charAt(i);
+			if(c == '+'){
+				i++;
+			}else if( c == '-'){
+				i++;
+			}
+			
+			for(; i < str.length(); i++){
+				if( c != '.'){//if is a decimal point continue 
+					Character.getNumericValue(c);					
+				}
+			}
+			return true;
+		}
+		catch(Exception e){
+			System.out.println("not a correct string format");
+			return false;
+		}
 	}
 	/*
 	 * returns <0 if n < this return >0 if this>0 
@@ -94,12 +115,7 @@ public class Number {
 				return 1;
 			if(thisPtr == null)
 				return -1;
-			
-				
 		}
-		
-		
-		
 		return 0;
 	}
 	public Number add(Number n){
@@ -125,12 +141,18 @@ public class Number {
 			lineUp(n);
 			Number r = subtractAbsolute(n);
 			r.setNegative(this.negative);
+			trim();
+			n.trim();
+			r.trim();
 			return r;
 		}
 		if(compare < 0){//n is bigger
 			lineUp(n);
 			Number r = n.subtractAbsolute(this);//takes this object and substract n-this
 			r.setNegative(n.getNegative());
+			trim();
+			n.trim();
+			r.trim();
 			return r;
 		}
 		else
@@ -190,8 +212,47 @@ public class Number {
 		difference.setDecimalPlaces(decimalPlaces);
 		return difference;
 }
-	public Number subtract(Number n){
-		return null;
+	public Number subtract(Number n){	
+		if(n == null){
+			return this;
+		}	
+		//if this and n have the same sign just add them and set the correct sign
+		if(negative != n.getNegative()){
+			lineUp(n);//n is send as a reference only therefore it gets change on the method
+			Number r = addAbsolute(n);
+			r.setNegative(this.negative);//set result as this negative
+			//set result decimal place by 
+			if(decimalPlaces > n.decimalPlaces)
+				r.setDecimalPlaces(decimalPlaces);
+			else 
+				r.setDecimalPlaces(n.getDecimalPlaces());
+			//triming this object, n and the result (r)
+			trim();
+			n.trim();
+			r.trim();
+			return r;
+		}
+		int compare = compareToAbsolute(n);
+		if(compare > 0){//this is bigger
+			lineUp(n);
+			Number r = subtractAbsolute(n);
+			r.setNegative(!this.negative);
+			trim();
+			n.trim();
+			r.trim();
+			return r;
+		}
+		if(compare < 0){//n is bigger
+			lineUp(n);
+			Number r = n.subtractAbsolute(this);//takes this object and substract n-this
+			r.setNegative(!n.getNegative());
+			trim();
+			n.trim();
+			r.trim();
+			return r;
+		}
+		else
+			return null;//compare == 0 so answer is 0
 }
 	public Number multiply(Number n){
 		Number product = new Number();
@@ -225,6 +286,7 @@ public class Number {
 		else{
 			product.setNegative(true);			
 		}
+		product.trim();
 		return product;
 
 	}
@@ -319,19 +381,6 @@ public class Number {
 	}
 	
 	public void trim(){
-//		//delete leading zeros
-//		for(int i=0; i<leadingZeros; i++){
-////			if(high.data != 0)
-////				return;//if is not leading 0 return
-//			high = high.next;
-//			
-//			
-//		}
-//		//delete trailing zeros with out affecting the decimal point
-//		for( int  i = 0; i < trailingZeros; i++){
-//			low = low.previous;
-//		}
-//		
 		
 		/*
 		 * delete leading zeros as long as is less than decimal places
@@ -376,7 +425,6 @@ public class Number {
 		//. Returns a String representation of the Number (so it can be displayed by
 		StringBuilder sb = new StringBuilder();
 		if(negative){
-			System.out.println("NEGATIVE");
 			sb.append("-");
 		}
 		Node pointer = high;
